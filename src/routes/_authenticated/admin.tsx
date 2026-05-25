@@ -189,7 +189,8 @@ function AddCowForm() {
   const [breed, setBreed] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [age, setAge] = useState("");
+  const [ageYears, setAgeYears] = useState("");
+  const [ageMonths, setAgeMonths] = useState("");
   const [weight, setWeight] = useState("");
   const [location, setLocation] = useState("");
   const [phone, setPhone] = useState("");
