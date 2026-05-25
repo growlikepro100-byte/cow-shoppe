@@ -40,15 +40,10 @@ function NewListing() {
           .eq("owner_id", id)
           .maybeSingle();
         setFarmId(farm?.id ?? null);
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("phone, whatsapp")
-          .eq("id", id)
-          .maybeSingle();
-        if (profile) {
-          setPhone(profile.phone ?? "");
-          setWhatsapp(profile.whatsapp ?? "");
-        }
+      }
+    });
+  }, []);
+
       }
     });
   }, []);
