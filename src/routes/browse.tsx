@@ -28,6 +28,7 @@ type ListingRow = {
   weight_kg: number | null;
   location: string | null;
   featured: boolean;
+  pinned: boolean;
   listing_media: { url: string; sort_order: number }[] | null;
 };
 
