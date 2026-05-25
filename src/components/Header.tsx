@@ -1,6 +1,8 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, Plus, User, LogOut, Heart, LayoutDashboard } from "lucide-react";
+import { Menu, Plus, User, LogOut, Heart, LayoutDashboard, Shield } from "lucide-react";
+import { useIsAdmin } from "@/hooks/use-admin";
+import { NotificationBell } from "@/components/NotificationBell";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
