@@ -17,6 +17,7 @@ import logo from "@/assets/logo.png";
 
 export function Header() {
   const router = useRouter();
+  const { isAdmin } = useIsAdmin();
   const [user, setUser] = useState<{ id: string; email?: string; avatar?: string } | null>(null);
 
   useEffect(() => {
