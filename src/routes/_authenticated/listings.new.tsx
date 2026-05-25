@@ -222,6 +222,26 @@ function NewListing() {
           />
         </div>
 
+        <div>
+          <Label>কেনার জন্য কী যোগ্যতা/শর্ত লাগবে</Label>
+          <Textarea
+            rows={3}
+            value={requirements}
+            onChange={(e) => setRequirements(e.target.value)}
+            placeholder="যেমন: অগ্রিম পেমেন্ট, NID ভেরিফিকেশন..."
+          />
+        </div>
+
+        <div>
+          <Label>বুকিং তথ্য</Label>
+          <Textarea
+            rows={3}
+            value={bookingInfo}
+            onChange={(e) => setBookingInfo(e.target.value)}
+            placeholder="বুকিং প্রসেস, ডেলিভারি, কন্টাক্ট..."
+          />
+        </div>
+
         <Button
           onClick={submit}
           disabled={submitting}
