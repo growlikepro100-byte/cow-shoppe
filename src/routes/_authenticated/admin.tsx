@@ -220,7 +220,8 @@ function AddCowForm() {
     setBreed("");
     setDescription("");
     setPrice("");
-    setAge("");
+    setAgeYears("");
+    setAgeMonths("");
     setWeight("");
     setLocation("");
     setPhone("");
