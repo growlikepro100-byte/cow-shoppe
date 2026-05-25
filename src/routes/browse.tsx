@@ -44,9 +44,10 @@ function Browse() {
       const { data, error } = await supabase
         .from("listings")
         .select(
-          "id, title, price, age_months, weight_kg, location, featured, listing_media(url, sort_order)",
+          "id, title, price, age_months, weight_kg, location, featured, pinned, listing_media(url, sort_order)",
         )
         .eq("status", "active")
+        .order("pinned", { ascending: false })
         .order("featured", { ascending: false })
         .order("created_at", { ascending: false })
         .limit(200);
