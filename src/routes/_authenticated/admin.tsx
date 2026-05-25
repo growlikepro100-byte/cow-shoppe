@@ -245,7 +245,7 @@ function AddCowForm() {
           breed: breed || null,
           description: description || null,
           price: Number(price),
-          age_months: age ? Number(age) : null,
+          age_months: (Number(ageYears) || 0) * 12 + (Number(ageMonths) || 0) || null,
           weight_kg: weight ? Number(weight) : null,
           location: location || null,
           buyer_requirements: requirements || null,
