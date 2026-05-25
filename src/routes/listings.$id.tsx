@@ -62,7 +62,7 @@ function ListingDetail() {
       const { data, error } = await supabase
         .from("listings")
         .select(
-          "id, seller_id, farm_id, title, description, price, age_months, weight_kg, location, featured, created_at, listing_media(id, url, type, sort_order)",
+          "id, seller_id, farm_id, title, description, breed, buyer_requirements, booking_info, pinned, price, age_months, weight_kg, location, featured, created_at, listing_media(id, url, type, sort_order)",
         )
         .eq("id", id)
         .maybeSingle();
