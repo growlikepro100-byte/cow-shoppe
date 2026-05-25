@@ -40,18 +40,11 @@ function NewListing() {
           .eq("owner_id", id)
           .maybeSingle();
         setFarmId(farm?.id ?? null);
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("phone, whatsapp")
-          .eq("id", id)
-          .maybeSingle();
-        if (profile) {
-          setPhone(profile.phone ?? "");
-          setWhatsapp(profile.whatsapp ?? "");
-        }
       }
     });
   }, []);
+
+
 
   const onFiles = (files: FileList | null) => {
     if (!files) return;
@@ -84,8 +77,7 @@ function NewListing() {
           age_months: age ? Number(age) : null,
           weight_kg: weight ? Number(weight) : null,
           location: location || null,
-          phone: phone || null,
-          whatsapp: whatsapp || null,
+
         })
         .select("id")
         .single();
@@ -110,8 +102,15 @@ function NewListing() {
         });
       }
 
-      // Save phone/whatsapp to profile for reuse
-      await supabase.from("profiles").update({ phone, whatsapp }).eq("id", userId);
+      // Save seller contact for this listing (auth-only readable)
+      if (phone || whatsapp) {
+        await supabase.from("listing_contacts").upsert({
+          listing_id: listing.id,
+          phone: phone || null,
+          whatsapp: whatsapp || null,
+        });
+      }
+
 
       toast.success("বিজ্ঞাপন প্রকাশিত হয়েছে!");
       router.navigate({ to: "/listings/$id", params: { id: listing.id } });

@@ -13,8 +13,6 @@ export const Route = createFileRoute("/_authenticated/profile")({
 function ProfilePage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -24,13 +22,11 @@ function ProfilePage() {
       if (!uid) return;
       const { data: p } = await supabase
         .from("profiles")
-        .select("full_name, phone, whatsapp")
+        .select("full_name")
         .eq("id", uid)
         .maybeSingle();
       if (p) {
         setFullName(p.full_name ?? "");
-        setPhone(p.phone ?? "");
-        setWhatsapp(p.whatsapp ?? "");
       }
     });
   }, []);
@@ -40,7 +36,7 @@ function ProfilePage() {
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
-      .update({ full_name: fullName, phone, whatsapp })
+      .update({ full_name: fullName })
       .eq("id", userId);
     setSaving(false);
     if (error) toast.error(error.message);
@@ -50,18 +46,13 @@ function ProfilePage() {
   return (
     <div className="container mx-auto max-w-xl px-4 py-8">
       <h1 className="font-display text-3xl font-bold">প্রোফাইল</h1>
+      <p className="mt-1 text-sm text-muted-foreground">
+        যোগাযোগের নম্বর প্রতিটি বিজ্ঞাপনে আলাদাভাবে দিন — শুধু লগ-ইন করা ব্যবহারকারীরা তা দেখতে পাবেন।
+      </p>
       <div className="mt-6 space-y-4 rounded-2xl border border-border bg-card p-6 shadow-card">
         <div>
           <Label>পূর্ণ নাম</Label>
           <Input value={fullName} onChange={(e) => setFullName(e.target.value)} />
-        </div>
-        <div>
-          <Label>মোবাইল</Label>
-          <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="01XXXXXXXXX" />
-        </div>
-        <div>
-          <Label>WhatsApp</Label>
-          <Input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
         </div>
         <Button onClick={save} disabled={saving} className="w-full bg-gradient-primary">
           {saving ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ করুন"}
