@@ -45,7 +45,7 @@ type ListingDetailRow = {
   created_at: string;
   listing_media: { id: string; url: string; type: string; sort_order: number }[];
   profiles: { full_name: string | null; avatar_url: string | null } | null;
-  farms: { id: string; name: string } | null;
+  farms: { id: string; name: string; location: string | null; description: string | null; cover_image: string | null } | null;
 };
 
 function ListingDetail() {
@@ -58,13 +58,33 @@ function ListingDetail() {
       const { data, error } = await supabase
         .from("listings")
         .select(
-          "id, seller_id, farm_id, title, description, price, age_months, weight_kg, location, featured, created_at, listing_media(id, url, type, sort_order), profiles!listings_seller_id_fkey(full_name, avatar_url), farms(id, name)",
+          "id, seller_id, farm_id, title, description, price, age_months, weight_kg, location, featured, created_at, listing_media(id, url, type, sort_order)",
         )
         .eq("id", id)
         .maybeSingle();
       if (error) throw error;
       if (!data) throw notFound();
-      return data as unknown as ListingDetailRow;
+
+      const [profileRes, farmRes] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("full_name, avatar_url")
+          .eq("id", data.seller_id)
+          .maybeSingle(),
+        data.farm_id
+          ? supabase
+              .from("farms")
+              .select("id, name, location, description, cover_image")
+              .eq("id", data.farm_id)
+              .maybeSingle()
+          : Promise.resolve({ data: null } as { data: null }),
+      ]);
+
+      return {
+        ...data,
+        profiles: profileRes.data ?? null,
+        farms: farmRes.data ?? null,
+      } as unknown as ListingDetailRow;
     },
   });
 
@@ -229,16 +249,32 @@ function ListingDetail() {
                 </div>
                 <div className="text-xs text-muted-foreground">Google যাচাইকৃত</div>
               </div>
-              {listing.farms && (
-                <Link
-                  to="/farms/$id"
-                  params={{ id: listing.farms.id }}
-                  className="text-sm font-medium text-primary hover:underline"
-                >
-                  খামার দেখুন
-                </Link>
-              )}
             </div>
+
+            {listing.farms && (
+              <Link
+                to="/farms/$id"
+                params={{ id: listing.farms.id }}
+                className="mt-4 flex items-center gap-3 rounded-xl border border-border bg-background/50 p-3 hover:bg-accent/40"
+              >
+                <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg bg-primary/10">
+                  {listing.farms.cover_image ? (
+                    <img src={listing.farms.cover_image} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="text-xl">🏡</span>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold truncate">{listing.farms.name}</div>
+                  {listing.farms.location && (
+                    <div className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                      <MapPin className="h-3 w-3" /> {listing.farms.location}
+                    </div>
+                  )}
+                </div>
+                <span className="text-xs font-medium text-primary">খামার দেখুন →</span>
+              </Link>
+            )}
           </div>
 
           {listing.description && (
