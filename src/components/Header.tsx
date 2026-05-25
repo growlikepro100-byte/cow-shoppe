@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import logo from "@/assets/logo.png";
 
 export function Header() {
   const router = useRouter();
@@ -51,13 +52,12 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-border/60 glass">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-primary text-primary-foreground shadow-card">
-            <span className="text-lg">🐄</span>
-          </span>
+          <img src={logo} alt="গরু কিনবো" className="h-11 w-11 object-contain" />
           <span className="font-display text-xl font-bold tracking-tight">
             গরু <span className="text-primary">কিনবো</span>
           </span>
         </Link>
+
 
         <nav className="hidden items-center gap-1 md:flex">
           <Link
