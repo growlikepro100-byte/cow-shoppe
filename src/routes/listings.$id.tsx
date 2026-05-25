@@ -45,7 +45,7 @@ type ListingDetailRow = {
   created_at: string;
   listing_media: { id: string; url: string; type: string; sort_order: number }[];
   profiles: { full_name: string | null; avatar_url: string | null } | null;
-  farms: { id: string; name: string } | null;
+  farms: { id: string; name: string; location: string | null; description: string | null; cover_image: string | null } | null;
 };
 
 function ListingDetail() {
@@ -58,13 +58,33 @@ function ListingDetail() {
       const { data, error } = await supabase
         .from("listings")
         .select(
-          "id, seller_id, farm_id, title, description, price, age_months, weight_kg, location, featured, created_at, listing_media(id, url, type, sort_order), profiles!listings_seller_id_fkey(full_name, avatar_url), farms(id, name)",
+          "id, seller_id, farm_id, title, description, price, age_months, weight_kg, location, featured, created_at, listing_media(id, url, type, sort_order)",
         )
         .eq("id", id)
         .maybeSingle();
       if (error) throw error;
       if (!data) throw notFound();
-      return data as unknown as ListingDetailRow;
+
+      const [profileRes, farmRes] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("full_name, avatar_url")
+          .eq("id", data.seller_id)
+          .maybeSingle(),
+        data.farm_id
+          ? supabase
+              .from("farms")
+              .select("id, name, location, description, cover_image")
+              .eq("id", data.farm_id)
+              .maybeSingle()
+          : Promise.resolve({ data: null } as { data: null }),
+      ]);
+
+      return {
+        ...data,
+        profiles: profileRes.data ?? null,
+        farms: farmRes.data ?? null,
+      } as unknown as ListingDetailRow;
     },
   });
 
