@@ -142,6 +142,15 @@ function NewListing() {
         </div>
 
         <div>
+          <Label>গরুর পরিচয় / জাত</Label>
+          <Input
+            placeholder="যেমন: ব্রাহমা, শাহীওয়াল, দেশি"
+            value={breed}
+            onChange={(e) => setBreed(e.target.value)}
+          />
+        </div>
+
+        <div>
           <Label>ছবি/ভিডিও আপলোড</Label>
           <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
             {media.map((m, i) => (
