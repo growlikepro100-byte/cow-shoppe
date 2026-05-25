@@ -65,64 +65,47 @@ function Index() {
   return (
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-hero text-primary-foreground">
-        <div className="absolute inset-0 opacity-10" aria-hidden>
+      <section className="relative overflow-hidden bg-gradient-hero py-10 text-primary-foreground md:py-14">
+        <div className="absolute inset-0 opacity-20" aria-hidden>
           <div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-gold blur-3xl" />
           <div className="absolute right-0 top-40 h-96 w-96 rounded-full bg-primary-glow blur-3xl" />
         </div>
-        <div className="container relative mx-auto grid gap-8 px-4 py-16 md:grid-cols-2 md:gap-12 md:py-24">
+        <div className="container relative mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex flex-col justify-center"
+            className="mx-auto max-w-5xl"
           >
-            <span className="inline-flex w-fit items-center gap-2 rounded-full bg-gold/15 px-4 py-1.5 text-sm font-semibold text-gold">
-              🌙 কোরবানি ঈদ ২০২৬
-            </span>
-            <h1 className="mt-4 font-display text-4xl font-bold leading-tight md:text-6xl">
-              বিশ্বস্ত খামার থেকে <br />
-              <span className="text-gold">কোরবানির গরু</span>
-            </h1>
-            <p className="mt-4 max-w-xl text-base text-primary-foreground/80 md:text-lg">
-              দালাল ছাড়া সরাসরি খামারি ও বিক্রেতার কাছ থেকে গরু কিনুন। Google যাচাইকৃত ভেরিফায়েড সেলার, সরাসরি কল ও WhatsApp যোগাযোগ।
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/browse">
-                <Button size="lg" className="bg-gradient-gold text-gold-foreground shadow-gold hover:opacity-95">
+            <div className="relative overflow-hidden rounded-3xl border border-gold/30 shadow-gold ring-1 ring-white/10">
+              <img
+                src={heroCow}
+                alt="গরু কিনুন — কোরবানি ঈদ ২০২৬"
+                className="block h-auto w-full object-cover"
+                loading="eager"
+              />
+            </div>
+
+            <div className="mt-6 flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-center">
+              <Link to="/browse" className="w-full sm:w-auto">
+                <Button size="lg" className="h-12 w-full bg-gradient-gold text-gold-foreground shadow-gold hover:opacity-95 sm:w-auto">
                   <Search className="mr-2 h-5 w-5" /> গরু খুঁজুন
                 </Button>
               </Link>
-              <Link to="/listings/new">
+              <Link to="/listings/new" className="w-full sm:w-auto">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10"
+                  className="h-12 w-full border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 sm:w-auto"
                 >
                   বিক্রি করুন <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
             </div>
           </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="relative hidden items-center justify-center md:flex"
-          >
-            <div className="absolute inset-0 rounded-3xl bg-gradient-gold opacity-20 blur-2xl" />
-            <div className="relative aspect-square w-full max-w-md rounded-3xl border border-gold/30 bg-card/10 p-8 backdrop-blur">
-              <div className="flex h-full flex-col items-center justify-center text-center">
-                <div className="text-[10rem] leading-none">🐄</div>
-                <p className="mt-4 font-display text-2xl text-primary-foreground">
-                  হালাল · স্বাস্থ্যবান · যাচাইকৃত
-                </p>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </section>
+
 
       {/* Trust strip */}
       <section className="border-y border-border bg-card">
