@@ -67,6 +67,11 @@ function NewListing() {
       toast.error("শিরোনাম ও দাম দিন");
       return;
     }
+    const priceNum = Number(price);
+    if (!Number.isFinite(priceNum) || priceNum <= 0 || priceNum > 99999999) {
+      toast.error("দাম সঠিক নয়", { description: "দাম ১ থেকে ৯,৯৯,৯৯,৯৯৯ টাকার মধ্যে দিন" });
+      return;
+    }
     setSubmitting(true);
     try {
       const { data: listing, error } = await supabase
