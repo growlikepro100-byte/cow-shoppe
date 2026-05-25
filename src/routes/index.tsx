@@ -5,6 +5,7 @@ import { ListingCard, type ListingCardData } from "@/components/ListingCard";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight, Search, ShieldCheck, Zap, Users } from "lucide-react";
+import heroCow from "@/assets/hero-cow.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
