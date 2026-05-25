@@ -181,12 +181,16 @@ export type Database = {
       listings: {
         Row: {
           age_months: number | null
+          booking_info: string | null
+          breed: string | null
+          buyer_requirements: string | null
           created_at: string
           description: string | null
           farm_id: string | null
           featured: boolean
           id: string
           location: string | null
+          pinned: boolean
           price: number
           seller_id: string
           status: Database["public"]["Enums"]["listing_status"]
@@ -196,12 +200,16 @@ export type Database = {
         }
         Insert: {
           age_months?: number | null
+          booking_info?: string | null
+          breed?: string | null
+          buyer_requirements?: string | null
           created_at?: string
           description?: string | null
           farm_id?: string | null
           featured?: boolean
           id?: string
           location?: string | null
+          pinned?: boolean
           price: number
           seller_id: string
           status?: Database["public"]["Enums"]["listing_status"]
@@ -211,12 +219,16 @@ export type Database = {
         }
         Update: {
           age_months?: number | null
+          booking_info?: string | null
+          breed?: string | null
+          buyer_requirements?: string | null
           created_at?: string
           description?: string | null
           farm_id?: string | null
           featured?: boolean
           id?: string
           location?: string | null
+          pinned?: boolean
           price?: number
           seller_id?: string
           status?: Database["public"]["Enums"]["listing_status"]
@@ -233,6 +245,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          message: string
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          message: string
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          message?: string
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -261,14 +303,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
+      app_role: "admin" | "moderator" | "user"
       listing_status: "active" | "sold" | "inactive"
       media_type: "image" | "video"
       user_type: "farm" | "individual"
@@ -399,6 +469,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "moderator", "user"],
       listing_status: ["active", "sold", "inactive"],
       media_type: ["image", "video"],
       user_type: ["farm", "individual"],
