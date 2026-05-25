@@ -37,6 +37,10 @@ type ListingDetailRow = {
   farm_id: string | null;
   title: string;
   description: string | null;
+  breed: string | null;
+  buyer_requirements: string | null;
+  booking_info: string | null;
+  pinned: boolean;
   price: number;
   age_months: number | null;
   weight_kg: number | null;
