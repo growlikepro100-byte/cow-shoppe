@@ -19,6 +19,7 @@ function NewListing() {
   const [userId, setUserId] = useState<string | null>(null);
   const [farmId, setFarmId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
+  const [breed, setBreed] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [age, setAge] = useState("");
@@ -26,6 +27,8 @@ function NewListing() {
   const [location, setLocation] = useState("");
   const [phone, setPhone] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [requirements, setRequirements] = useState("");
+  const [bookingInfo, setBookingInfo] = useState("");
   const [media, setMedia] = useState<MediaFile[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
