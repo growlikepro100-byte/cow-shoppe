@@ -124,8 +124,9 @@ function NewListing() {
 
       toast.success("বিজ্ঞাপন প্রকাশিত হয়েছে!");
       router.navigate({ to: "/listings/$id", params: { id: listing.id } });
-    } catch (e) {
-      toast.error("পোস্ট ব্যর্থ", { description: e instanceof Error ? e.message : String(e) });
+    } catch (e: any) {
+      const msg = e?.message || e?.error_description || e?.hint || e?.details || (typeof e === "string" ? e : JSON.stringify(e));
+      toast.error("পোস্ট ব্যর্থ", { description: msg });
     } finally {
       setSubmitting(false);
     }
