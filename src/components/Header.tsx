@@ -88,6 +88,7 @@ export function Header() {
                   <Plus className="mr-1 h-4 w-4" /> বিজ্ঞাপন দিন
                 </Button>
               </Link>
+              <NotificationBell />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-border bg-card">
@@ -100,6 +101,16 @@ export function Header() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin">
+                          <Shield className="mr-2 h-4 w-4 text-gold" /> এডমিন প্যানেল
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
                   <DropdownMenuItem asChild>
                     <Link to="/dashboard">
                       <LayoutDashboard className="mr-2 h-4 w-4" /> ড্যাশবোর্ড
