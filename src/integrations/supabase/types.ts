@@ -16,7 +16,7 @@ export type Database = {
     Tables: {
       booking_requests: {
         Row: {
-          buyer_id: string | null
+          buyer_id: string
           buyer_name: string
           buyer_phone: string
           created_at: string
@@ -25,7 +25,7 @@ export type Database = {
           message: string | null
         }
         Insert: {
-          buyer_id?: string | null
+          buyer_id?: string
           buyer_name: string
           buyer_phone: string
           created_at?: string
@@ -34,7 +34,7 @@ export type Database = {
           message?: string | null
         }
         Update: {
-          buyer_id?: string | null
+          buyer_id?: string
           buyer_name?: string
           buyer_phone?: string
           created_at?: string
@@ -111,6 +111,38 @@ export type Database = {
           },
         ]
       }
+      listing_contacts: {
+        Row: {
+          created_at: string
+          listing_id: string
+          phone: string | null
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          created_at?: string
+          listing_id: string
+          phone?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          created_at?: string
+          listing_id?: string
+          phone?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_contacts_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: true
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listing_media: {
         Row: {
           created_at: string
@@ -155,14 +187,12 @@ export type Database = {
           featured: boolean
           id: string
           location: string | null
-          phone: string | null
           price: number
           seller_id: string
           status: Database["public"]["Enums"]["listing_status"]
           title: string
           updated_at: string
           weight_kg: number | null
-          whatsapp: string | null
         }
         Insert: {
           age_months?: number | null
@@ -172,14 +202,12 @@ export type Database = {
           featured?: boolean
           id?: string
           location?: string | null
-          phone?: string | null
           price: number
           seller_id: string
           status?: Database["public"]["Enums"]["listing_status"]
           title: string
           updated_at?: string
           weight_kg?: number | null
-          whatsapp?: string | null
         }
         Update: {
           age_months?: number | null
@@ -189,14 +217,12 @@ export type Database = {
           featured?: boolean
           id?: string
           location?: string | null
-          phone?: string | null
           price?: number
           seller_id?: string
           status?: Database["public"]["Enums"]["listing_status"]
           title?: string
           updated_at?: string
           weight_kg?: number | null
-          whatsapp?: string | null
         }
         Relationships: [
           {
@@ -214,30 +240,24 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
-          phone: string | null
           updated_at: string
           user_type: Database["public"]["Enums"]["user_type"]
-          whatsapp: string | null
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
           full_name?: string | null
           id: string
-          phone?: string | null
           updated_at?: string
           user_type?: Database["public"]["Enums"]["user_type"]
-          whatsapp?: string | null
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
-          phone?: string | null
           updated_at?: string
           user_type?: Database["public"]["Enums"]["user_type"]
-          whatsapp?: string | null
         }
         Relationships: []
       }
