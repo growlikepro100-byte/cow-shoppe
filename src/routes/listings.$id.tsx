@@ -294,6 +294,24 @@ function ListingDetail() {
             </div>
           )}
 
+          {listing.buyer_requirements && (
+            <div className="mt-6 rounded-2xl border border-gold/30 bg-gold/5 p-5">
+              <h2 className="font-display text-lg font-bold text-gold">কেনার যোগ্যতা / শর্ত</h2>
+              <p className="mt-2 whitespace-pre-wrap text-foreground/90 leading-relaxed">
+                {listing.buyer_requirements}
+              </p>
+            </div>
+          )}
+
+          {listing.booking_info && (
+            <div className="mt-4 rounded-2xl border border-primary/30 bg-primary/5 p-5">
+              <h2 className="font-display text-lg font-bold text-primary">বুকিং তথ্য</h2>
+              <p className="mt-2 whitespace-pre-wrap text-foreground/90 leading-relaxed">
+                {listing.booking_info}
+              </p>
+            </div>
+          )}
+
           <p className="mt-6 text-xs text-muted-foreground">
             পোস্ট করা হয়েছে: {toBanglaNumber(new Date(listing.created_at).toLocaleDateString("bn-BD"))}
           </p>
