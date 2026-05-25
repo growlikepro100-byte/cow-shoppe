@@ -1,0 +1,321 @@
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Phone,
+  MessageCircle,
+  MapPin,
+  Calendar,
+  Weight,
+  BadgeCheck,
+  Send,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { formatPriceBn, formatAgeBn, formatWeightBn, toBanglaNumber } from "@/lib/format";
+import { toast } from "sonner";
+
+export const Route = createFileRoute("/listings/$id")({
+  component: ListingDetail,
+});
+
+type ListingDetailRow = {
+  id: string;
+  seller_id: string;
+  farm_id: string | null;
+  title: string;
+  description: string | null;
+  price: number;
+  age_months: number | null;
+  weight_kg: number | null;
+  location: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+  featured: boolean;
+  created_at: string;
+  listing_media: { id: string; url: string; type: string; sort_order: number }[];
+  profiles: { full_name: string | null; avatar_url: string | null } | null;
+  farms: { id: string; name: string } | null;
+};
+
+function ListingDetail() {
+  const { id } = Route.useParams();
+  const [activeMedia, setActiveMedia] = useState(0);
+
+  const { data: listing, isLoading } = useQuery({
+    queryKey: ["listing", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("listings")
+        .select(
+          "id, seller_id, farm_id, title, description, price, age_months, weight_kg, location, phone, whatsapp, featured, created_at, listing_media(id, url, type, sort_order), profiles!listings_seller_id_fkey(full_name, avatar_url), farms(id, name)",
+        )
+        .eq("id", id)
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw notFound();
+      return data as unknown as ListingDetailRow;
+    },
+  });
+
+  if (isLoading) {
+    return <div className="container mx-auto p-8 text-center text-muted-foreground">লোড হচ্ছে...</div>;
+  }
+  if (!listing) return null;
+
+  const media = [...listing.listing_media].sort((a, b) => a.sort_order - b.sort_order);
+  const current = media[activeMedia];
+  const phone = listing.phone ?? "";
+  const whatsapp = listing.whatsapp ?? listing.phone ?? "";
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
+        {/* Gallery */}
+        <div>
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-muted shadow-card">
+            {current ? (
+              current.type === "video" ? (
+                <video src={current.url} controls className="h-full w-full object-cover" />
+              ) : (
+                <img src={current.url} alt={listing.title} className="h-full w-full object-cover" />
+              )
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-8xl">🐄</div>
+            )}
+            {media.length > 1 && (
+              <>
+                <button
+                  onClick={() => setActiveMedia((i) => (i - 1 + media.length) % media.length)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 backdrop-blur"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => setActiveMedia((i) => (i + 1) % media.length)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 backdrop-blur"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </>
+            )}
+            {listing.featured && (
+              <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-gradient-gold px-3 py-1 text-xs font-semibold text-gold-foreground shadow-gold">
+                <BadgeCheck className="h-3.5 w-3.5" /> ফিচার্ড
+              </span>
+            )}
+          </div>
+          {media.length > 1 && (
+            <div className="mt-3 flex gap-2 overflow-x-auto">
+              {media.map((m, i) => (
+                <button
+                  key={m.id}
+                  onClick={() => setActiveMedia(i)}
+                  className={`relative h-16 w-20 shrink-0 overflow-hidden rounded-lg border-2 ${
+                    i === activeMedia ? "border-primary" : "border-transparent"
+                  }`}
+                >
+                  {m.type === "video" ? (
+                    <div className="flex h-full w-full items-center justify-center bg-muted text-xs">▶</div>
+                  ) : (
+                    <img src={m.url} alt="" className="h-full w-full object-cover" />
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Info */}
+        <div>
+          <h1 className="font-display text-3xl font-bold leading-tight md:text-4xl">
+            {listing.title}
+          </h1>
+          {listing.location && (
+            <p className="mt-2 inline-flex items-center gap-1 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4" /> {listing.location}
+            </p>
+          )}
+          <div className="mt-5 rounded-2xl bg-gradient-primary p-5 text-primary-foreground shadow-card">
+            <div className="text-sm opacity-80">দাম</div>
+            <div className="font-display text-4xl font-bold">{formatPriceBn(Number(listing.price))}</div>
+          </div>
+
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <div className="rounded-xl border border-border bg-card p-4">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Calendar className="h-4 w-4" /> বয়স
+              </div>
+              <div className="mt-1 font-semibold">{formatAgeBn(listing.age_months)}</div>
+            </div>
+            <div className="rounded-xl border border-border bg-card p-4">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Weight className="h-4 w-4" /> ওজন
+              </div>
+              <div className="mt-1 font-semibold">{formatWeightBn(listing.weight_kg)}</div>
+            </div>
+          </div>
+
+          {/* Contact actions */}
+          <div className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {phone && (
+              <a href={`tel:${phone}`}>
+                <Button className="h-12 w-full bg-gradient-primary text-primary-foreground hover:opacity-95">
+                  <Phone className="mr-2 h-5 w-5" /> কল করুন
+                </Button>
+              </a>
+            )}
+            {whatsapp && (
+              <a
+                href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+                  `আমি "${listing.title}" সম্পর্কে জানতে চাই (গরু কিনবো)`,
+                )}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Button className="h-12 w-full bg-[oklch(0.62_0.16_150)] text-white hover:opacity-90">
+                  <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp
+                </Button>
+              </a>
+            )}
+          </div>
+
+          <BookingDialog listingId={listing.id} listingTitle={listing.title} />
+
+          {/* Seller */}
+          <div className="mt-6 rounded-2xl border border-border bg-card p-5 shadow-card">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-primary/10">
+                {listing.profiles?.avatar_url ? (
+                  <img
+                    src={listing.profiles.avatar_url}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-xl">👤</span>
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-1.5 font-semibold">
+                  {listing.profiles?.full_name ?? "বিক্রেতা"}
+                  <BadgeCheck className="h-4 w-4 text-gold" />
+                </div>
+                <div className="text-xs text-muted-foreground">Google যাচাইকৃত</div>
+              </div>
+              {listing.farms && (
+                <Link
+                  to="/farms/$id"
+                  params={{ id: listing.farms.id }}
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  খামার দেখুন
+                </Link>
+              )}
+            </div>
+          </div>
+
+          {listing.description && (
+            <div className="mt-6">
+              <h2 className="font-display text-xl font-bold">বিবরণ</h2>
+              <p className="mt-2 whitespace-pre-wrap text-foreground/85 leading-relaxed">
+                {listing.description}
+              </p>
+            </div>
+          )}
+
+          <p className="mt-6 text-xs text-muted-foreground">
+            পোস্ট করা হয়েছে: {toBanglaNumber(new Date(listing.created_at).toLocaleDateString("bn-BD"))}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BookingDialog({ listingId, listingTitle }: { listingId: string; listingTitle: string }) {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = async () => {
+    if (!name || !phone) {
+      toast.error("নাম ও ফোন নাম্বার দিন");
+      return;
+    }
+    setSubmitting(true);
+    const { data: u } = await supabase.auth.getUser();
+    if (!u.user) {
+      toast.error("বুকিং পাঠাতে লগ ইন করুন");
+      setSubmitting(false);
+      return;
+    }
+    const { error } = await supabase.from("booking_requests").insert({
+      listing_id: listingId,
+      buyer_id: u.user.id,
+      buyer_name: name,
+      buyer_phone: phone,
+      message,
+    });
+    setSubmitting(false);
+    if (error) {
+      toast.error("পাঠানো যায়নি", { description: error.message });
+      return;
+    }
+    toast.success("বুকিং রিকোয়েস্ট পাঠানো হয়েছে");
+    setOpen(false);
+    setName("");
+    setPhone("");
+    setMessage("");
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="outline"
+          className="mt-3 h-12 w-full border-gold/40 text-gold-foreground hover:bg-gold/10"
+        >
+          <Send className="mr-2 h-4 w-4" /> বুকিং রিকোয়েস্ট পাঠান
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>বুকিং রিকোয়েস্ট</DialogTitle>
+        </DialogHeader>
+        <p className="text-sm text-muted-foreground">"{listingTitle}" এর জন্য</p>
+        <div className="space-y-3">
+          <div>
+            <Label>আপনার নাম</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div>
+            <Label>ফোন নাম্বার</Label>
+            <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="01XXXXXXXXX" />
+          </div>
+          <div>
+            <Label>মেসেজ (ঐচ্ছিক)</Label>
+            <Textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3} />
+          </div>
+          <Button onClick={submit} disabled={submitting} className="w-full bg-gradient-primary">
+            {submitting ? "পাঠানো হচ্ছে..." : "পাঠান"}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
