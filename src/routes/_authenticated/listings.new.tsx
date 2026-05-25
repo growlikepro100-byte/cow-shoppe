@@ -77,8 +77,7 @@ function NewListing() {
           age_months: age ? Number(age) : null,
           weight_kg: weight ? Number(weight) : null,
           location: location || null,
-          phone: phone || null,
-          whatsapp: whatsapp || null,
+
         })
         .select("id")
         .single();
