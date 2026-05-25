@@ -189,7 +189,8 @@ function AddCowForm() {
   const [breed, setBreed] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [age, setAge] = useState("");
+  const [ageYears, setAgeYears] = useState("");
+  const [ageMonths, setAgeMonths] = useState("");
   const [weight, setWeight] = useState("");
   const [location, setLocation] = useState("");
   const [phone, setPhone] = useState("");
@@ -219,7 +220,8 @@ function AddCowForm() {
     setBreed("");
     setDescription("");
     setPrice("");
-    setAge("");
+    setAgeYears("");
+    setAgeMonths("");
     setWeight("");
     setLocation("");
     setPhone("");
@@ -243,7 +245,7 @@ function AddCowForm() {
           breed: breed || null,
           description: description || null,
           price: Number(price),
-          age_months: age ? Number(age) : null,
+          age_months: (Number(ageYears) || 0) * 12 + (Number(ageMonths) || 0) || null,
           weight_kg: weight ? Number(weight) : null,
           location: location || null,
           buyer_requirements: requirements || null,
@@ -354,8 +356,12 @@ function AddCowForm() {
           <Input value={location} onChange={(e) => setLocation(e.target.value)} />
         </div>
         <div>
-          <Label>বয়স (মাস)</Label>
-          <Input type="number" value={age} onChange={(e) => setAge(e.target.value)} />
+          <Label>বয়স - বছর</Label>
+          <Input type="number" min="0" value={ageYears} onChange={(e) => setAgeYears(e.target.value)} />
+        </div>
+        <div>
+          <Label>বয়স - মাস</Label>
+          <Input type="number" min="0" max="11" value={ageMonths} onChange={(e) => setAgeMonths(e.target.value)} />
         </div>
         <div>
           <Label>ওজন (কেজি)</Label>
