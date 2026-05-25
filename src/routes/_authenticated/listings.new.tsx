@@ -44,9 +44,7 @@ function NewListing() {
     });
   }, []);
 
-      }
-    });
-  }, []);
+
 
   const onFiles = (files: FileList | null) => {
     if (!files) return;
