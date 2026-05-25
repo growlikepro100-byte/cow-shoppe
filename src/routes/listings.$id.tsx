@@ -179,8 +179,12 @@ function ListingDetail() {
         {/* Info */}
         <div>
           <h1 className="font-display text-3xl font-bold leading-tight md:text-4xl">
+            {listing.pinned && <span className="mr-2">📌</span>}
             {listing.title}
           </h1>
+          {listing.breed && (
+            <p className="mt-1 text-sm font-medium text-gold">পরিচয়: {listing.breed}</p>
+          )}
           {listing.location && (
             <p className="mt-2 inline-flex items-center gap-1 text-sm text-muted-foreground">
               <MapPin className="h-4 w-4" /> {listing.location}
