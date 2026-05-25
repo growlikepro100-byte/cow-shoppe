@@ -249,16 +249,32 @@ function ListingDetail() {
                 </div>
                 <div className="text-xs text-muted-foreground">Google যাচাইকৃত</div>
               </div>
-              {listing.farms && (
-                <Link
-                  to="/farms/$id"
-                  params={{ id: listing.farms.id }}
-                  className="text-sm font-medium text-primary hover:underline"
-                >
-                  খামার দেখুন
-                </Link>
-              )}
             </div>
+
+            {listing.farms && (
+              <Link
+                to="/farms/$id"
+                params={{ id: listing.farms.id }}
+                className="mt-4 flex items-center gap-3 rounded-xl border border-border bg-background/50 p-3 hover:bg-accent/40"
+              >
+                <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg bg-primary/10">
+                  {listing.farms.cover_image ? (
+                    <img src={listing.farms.cover_image} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="text-xl">🏡</span>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold truncate">{listing.farms.name}</div>
+                  {listing.farms.location && (
+                    <div className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                      <MapPin className="h-3 w-3" /> {listing.farms.location}
+                    </div>
+                  )}
+                </div>
+                <span className="text-xs font-medium text-primary">খামার দেখুন →</span>
+              </Link>
+            )}
           </div>
 
           {listing.description && (
