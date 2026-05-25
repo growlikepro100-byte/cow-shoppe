@@ -356,8 +356,12 @@ function AddCowForm() {
           <Input value={location} onChange={(e) => setLocation(e.target.value)} />
         </div>
         <div>
-          <Label>বয়স (মাস)</Label>
-          <Input type="number" value={age} onChange={(e) => setAge(e.target.value)} />
+          <Label>বয়স - বছর</Label>
+          <Input type="number" min="0" value={ageYears} onChange={(e) => setAgeYears(e.target.value)} />
+        </div>
+        <div>
+          <Label>বয়স - মাস</Label>
+          <Input type="number" min="0" max="11" value={ageMonths} onChange={(e) => setAgeMonths(e.target.value)} />
         </div>
         <div>
           <Label>ওজন (কেজি)</Label>
