@@ -1,6 +1,8 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, Plus, User, LogOut, Heart, LayoutDashboard } from "lucide-react";
+import { Menu, Plus, User, LogOut, Heart, LayoutDashboard, Shield } from "lucide-react";
+import { useIsAdmin } from "@/hooks/use-admin";
+import { NotificationBell } from "@/components/NotificationBell";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +17,7 @@ import logo from "@/assets/logo.png";
 
 export function Header() {
   const router = useRouter();
+  const { isAdmin } = useIsAdmin();
   const [user, setUser] = useState<{ id: string; email?: string; avatar?: string } | null>(null);
 
   useEffect(() => {
@@ -85,6 +88,7 @@ export function Header() {
                   <Plus className="mr-1 h-4 w-4" /> বিজ্ঞাপন দিন
                 </Button>
               </Link>
+              <NotificationBell />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-border bg-card">
@@ -97,6 +101,16 @@ export function Header() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin">
+                          <Shield className="mr-2 h-4 w-4 text-gold" /> এডমিন প্যানেল
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
                   <DropdownMenuItem asChild>
                     <Link to="/dashboard">
                       <LayoutDashboard className="mr-2 h-4 w-4" /> ড্যাশবোর্ড

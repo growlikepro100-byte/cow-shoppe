@@ -37,6 +37,10 @@ type ListingDetailRow = {
   farm_id: string | null;
   title: string;
   description: string | null;
+  breed: string | null;
+  buyer_requirements: string | null;
+  booking_info: string | null;
+  pinned: boolean;
   price: number;
   age_months: number | null;
   weight_kg: number | null;
@@ -58,7 +62,7 @@ function ListingDetail() {
       const { data, error } = await supabase
         .from("listings")
         .select(
-          "id, seller_id, farm_id, title, description, price, age_months, weight_kg, location, featured, created_at, listing_media(id, url, type, sort_order)",
+          "id, seller_id, farm_id, title, description, breed, buyer_requirements, booking_info, pinned, price, age_months, weight_kg, location, featured, created_at, listing_media(id, url, type, sort_order)",
         )
         .eq("id", id)
         .maybeSingle();
@@ -175,8 +179,12 @@ function ListingDetail() {
         {/* Info */}
         <div>
           <h1 className="font-display text-3xl font-bold leading-tight md:text-4xl">
+            {listing.pinned && <span className="mr-2">📌</span>}
             {listing.title}
           </h1>
+          {listing.breed && (
+            <p className="mt-1 text-sm font-medium text-gold">পরিচয়: {listing.breed}</p>
+          )}
           {listing.location && (
             <p className="mt-2 inline-flex items-center gap-1 text-sm text-muted-foreground">
               <MapPin className="h-4 w-4" /> {listing.location}
@@ -282,6 +290,24 @@ function ListingDetail() {
               <h2 className="font-display text-xl font-bold">বিবরণ</h2>
               <p className="mt-2 whitespace-pre-wrap text-foreground/85 leading-relaxed">
                 {listing.description}
+              </p>
+            </div>
+          )}
+
+          {listing.buyer_requirements && (
+            <div className="mt-6 rounded-2xl border border-gold/30 bg-gold/5 p-5">
+              <h2 className="font-display text-lg font-bold text-gold">কেনার যোগ্যতা / শর্ত</h2>
+              <p className="mt-2 whitespace-pre-wrap text-foreground/90 leading-relaxed">
+                {listing.buyer_requirements}
+              </p>
+            </div>
+          )}
+
+          {listing.booking_info && (
+            <div className="mt-4 rounded-2xl border border-primary/30 bg-primary/5 p-5">
+              <h2 className="font-display text-lg font-bold text-primary">বুকিং তথ্য</h2>
+              <p className="mt-2 whitespace-pre-wrap text-foreground/90 leading-relaxed">
+                {listing.booking_info}
               </p>
             </div>
           )}

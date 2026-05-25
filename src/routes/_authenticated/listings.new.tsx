@@ -19,6 +19,7 @@ function NewListing() {
   const [userId, setUserId] = useState<string | null>(null);
   const [farmId, setFarmId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
+  const [breed, setBreed] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [age, setAge] = useState("");
@@ -26,6 +27,8 @@ function NewListing() {
   const [location, setLocation] = useState("");
   const [phone, setPhone] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [requirements, setRequirements] = useState("");
+  const [bookingInfo, setBookingInfo] = useState("");
   const [media, setMedia] = useState<MediaFile[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
@@ -72,12 +75,14 @@ function NewListing() {
           seller_id: userId,
           farm_id: farmId,
           title,
+          breed: breed || null,
           description: description || null,
           price: Number(price),
           age_months: age ? Number(age) : null,
           weight_kg: weight ? Number(weight) : null,
           location: location || null,
-
+          buyer_requirements: requirements || null,
+          booking_info: bookingInfo || null,
         })
         .select("id")
         .single();
@@ -133,6 +138,15 @@ function NewListing() {
             placeholder="যেমন: দেশি বড় ষাঁড়, ৬ দাঁত"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <Label>গরুর পরিচয় / জাত</Label>
+          <Input
+            placeholder="যেমন: ব্রাহমা, শাহীওয়াল, দেশি"
+            value={breed}
+            onChange={(e) => setBreed(e.target.value)}
           />
         </div>
 
@@ -205,6 +219,26 @@ function NewListing() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="গরু সম্পর্কে বিস্তারিত লিখুন..."
+          />
+        </div>
+
+        <div>
+          <Label>কেনার জন্য কী যোগ্যতা/শর্ত লাগবে</Label>
+          <Textarea
+            rows={3}
+            value={requirements}
+            onChange={(e) => setRequirements(e.target.value)}
+            placeholder="যেমন: অগ্রিম পেমেন্ট, NID ভেরিফিকেশন..."
+          />
+        </div>
+
+        <div>
+          <Label>বুকিং তথ্য</Label>
+          <Textarea
+            rows={3}
+            value={bookingInfo}
+            onChange={(e) => setBookingInfo(e.target.value)}
+            placeholder="বুকিং প্রসেস, ডেলিভারি, কন্টাক্ট..."
           />
         </div>
 
