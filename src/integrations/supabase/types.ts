@@ -14,7 +14,233 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      booking_requests: {
+        Row: {
+          buyer_id: string | null
+          buyer_name: string
+          buyer_phone: string
+          created_at: string
+          id: string
+          listing_id: string
+          message: string | null
+        }
+        Insert: {
+          buyer_id?: string | null
+          buyer_name: string
+          buyer_phone: string
+          created_at?: string
+          id?: string
+          listing_id: string
+          message?: string | null
+        }
+        Update: {
+          buyer_id?: string | null
+          buyer_name?: string
+          buyer_phone?: string
+          created_at?: string
+          id?: string
+          listing_id?: string
+          message?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_requests_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      farms: {
+        Row: {
+          cover_image: string | null
+          created_at: string
+          description: string | null
+          id: string
+          location: string | null
+          name: string
+          owner_id: string
+          updated_at: string
+        }
+        Insert: {
+          cover_image?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          name: string
+          owner_id: string
+          updated_at?: string
+        }
+        Update: {
+          cover_image?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          name?: string
+          owner_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      favorites: {
+        Row: {
+          created_at: string
+          listing_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          listing_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          listing_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listing_media: {
+        Row: {
+          created_at: string
+          id: string
+          listing_id: string
+          sort_order: number
+          type: Database["public"]["Enums"]["media_type"]
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          listing_id: string
+          sort_order?: number
+          type?: Database["public"]["Enums"]["media_type"]
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          listing_id?: string
+          sort_order?: number
+          type?: Database["public"]["Enums"]["media_type"]
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_media_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listings: {
+        Row: {
+          age_months: number | null
+          created_at: string
+          description: string | null
+          farm_id: string | null
+          featured: boolean
+          id: string
+          location: string | null
+          phone: string | null
+          price: number
+          seller_id: string
+          status: Database["public"]["Enums"]["listing_status"]
+          title: string
+          updated_at: string
+          weight_kg: number | null
+          whatsapp: string | null
+        }
+        Insert: {
+          age_months?: number | null
+          created_at?: string
+          description?: string | null
+          farm_id?: string | null
+          featured?: boolean
+          id?: string
+          location?: string | null
+          phone?: string | null
+          price: number
+          seller_id: string
+          status?: Database["public"]["Enums"]["listing_status"]
+          title: string
+          updated_at?: string
+          weight_kg?: number | null
+          whatsapp?: string | null
+        }
+        Update: {
+          age_months?: number | null
+          created_at?: string
+          description?: string | null
+          farm_id?: string | null
+          featured?: boolean
+          id?: string
+          location?: string | null
+          phone?: string | null
+          price?: number
+          seller_id?: string
+          status?: Database["public"]["Enums"]["listing_status"]
+          title?: string
+          updated_at?: string
+          weight_kg?: number | null
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listings_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+          user_type: Database["public"]["Enums"]["user_type"]
+          whatsapp: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+          user_type?: Database["public"]["Enums"]["user_type"]
+          whatsapp?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_type?: Database["public"]["Enums"]["user_type"]
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +249,9 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      listing_status: "active" | "sold" | "inactive"
+      media_type: "image" | "video"
+      user_type: "farm" | "individual"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +378,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      listing_status: ["active", "sold", "inactive"],
+      media_type: ["image", "video"],
+      user_type: ["farm", "individual"],
+    },
   },
 } as const
