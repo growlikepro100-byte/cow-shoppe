@@ -41,8 +41,6 @@ type ListingDetailRow = {
   age_months: number | null;
   weight_kg: number | null;
   location: string | null;
-  phone: string | null;
-  whatsapp: string | null;
   featured: boolean;
   created_at: string;
   listing_media: { id: string; url: string; type: string; sort_order: number }[];
@@ -60,13 +58,28 @@ function ListingDetail() {
       const { data, error } = await supabase
         .from("listings")
         .select(
-          "id, seller_id, farm_id, title, description, price, age_months, weight_kg, location, phone, whatsapp, featured, created_at, listing_media(id, url, type, sort_order), profiles!listings_seller_id_fkey(full_name, avatar_url), farms(id, name)",
+          "id, seller_id, farm_id, title, description, price, age_months, weight_kg, location, featured, created_at, listing_media(id, url, type, sort_order), profiles!listings_seller_id_fkey(full_name, avatar_url), farms(id, name)",
         )
         .eq("id", id)
         .maybeSingle();
       if (error) throw error;
       if (!data) throw notFound();
       return data as unknown as ListingDetailRow;
+    },
+  });
+
+  // Contact info (phone/whatsapp) is only available to authenticated users
+  const { data: contact } = useQuery({
+    queryKey: ["listing-contact", id],
+    queryFn: async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) return null;
+      const { data } = await supabase
+        .from("listing_contacts")
+        .select("phone, whatsapp")
+        .eq("listing_id", id)
+        .maybeSingle();
+      return data;
     },
   });
 
@@ -77,8 +90,9 @@ function ListingDetail() {
 
   const media = [...listing.listing_media].sort((a, b) => a.sort_order - b.sort_order);
   const current = media[activeMedia];
-  const phone = listing.phone ?? "";
-  const whatsapp = listing.whatsapp ?? listing.phone ?? "";
+  const phone = contact?.phone ?? "";
+  const whatsapp = contact?.whatsapp ?? contact?.phone ?? "";
+
 
   return (
     <div className="container mx-auto px-4 py-8">
