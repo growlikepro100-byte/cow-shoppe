@@ -20,7 +20,10 @@ export function useCurrentUserId() {
       setIsAuthReady(true);
     });
 
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   return { userId: uid, isAuthReady };
@@ -47,6 +50,6 @@ export function useIsAdmin() {
     isAdmin: !!data,
     userId,
     isAuthReady,
-    isCheckingAdmin: isAuthReady && !!userId && (isLoading || isFetching),
+    isCheckingAdmin: !isAuthReady || (!!userId && (isLoading || isFetching)),
   };
 }
