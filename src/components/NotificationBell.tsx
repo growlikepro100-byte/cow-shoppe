@@ -19,12 +19,12 @@ type Notification = {
 };
 
 export function NotificationBell() {
-  const uid = useCurrentUserId();
+  const { userId: uid, isAuthReady } = useCurrentUserId();
   const qc = useQueryClient();
 
   const { data: items = [] } = useQuery({
     queryKey: ["notifications", uid],
-    enabled: !!uid,
+    enabled: isAuthReady && !!uid,
     refetchInterval: 30_000,
     queryFn: async () => {
       const { data, error } = await supabase
@@ -38,7 +38,7 @@ export function NotificationBell() {
     },
   });
 
-  if (!uid) return null;
+  if (!isAuthReady || !uid) return null;
 
   const unread = items.filter((n) => !n.read).length;
 
