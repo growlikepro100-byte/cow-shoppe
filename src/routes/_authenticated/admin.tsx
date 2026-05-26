@@ -19,19 +19,38 @@ import { toast } from "sonner";
 import { formatPriceBn, toBanglaNumber } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  beforeLoad: async () => {
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user) throw redirect({ to: "/login" });
-    const { data: role } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", u.user.id)
-      .eq("role", "admin")
-      .maybeSingle();
-    if (!role) throw redirect({ to: "/" });
-  },
-  component: AdminPanel,
+  component: AdminGate,
 });
+
+import { useIsAdmin } from "@/hooks/use-admin";
+import { Navigate } from "@tanstack/react-router";
+
+function AdminGate() {
+  const { isAdmin, userId } = useIsAdmin();
+  // session এখনো হাইড্রেট হয়নি
+  if (userId === null) {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">
+        লোড হচ্ছে...
+      </div>
+    );
+  }
+  // role query এখনো চলছে
+  const [checked, setChecked] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setChecked(true), 800);
+    return () => clearTimeout(t);
+  }, []);
+  if (!isAdmin && !checked) {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">
+        লোড হচ্ছে...
+      </div>
+    );
+  }
+  if (!isAdmin) return <Navigate to="/" />;
+  return <AdminPanel />;
+}
 
 function AdminPanel() {
   return (
