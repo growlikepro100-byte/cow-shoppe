@@ -26,13 +26,9 @@ import { useIsAdmin } from "@/hooks/use-admin";
 import { Navigate } from "@tanstack/react-router";
 
 function AdminGate() {
-  const { isAdmin, userId } = useIsAdmin();
-  const [waited, setWaited] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setWaited(true), 1200);
-    return () => clearTimeout(t);
-  }, []);
-  if (userId === null || (!isAdmin && !waited)) {
+  const { isAdmin, userId, isAuthReady, isCheckingAdmin } = useIsAdmin();
+
+  if (!isAuthReady || (userId && isCheckingAdmin)) {
     return (
       <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">
         লোড হচ্ছে...
