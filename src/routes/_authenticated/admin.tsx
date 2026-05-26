@@ -27,21 +27,12 @@ import { Navigate } from "@tanstack/react-router";
 
 function AdminGate() {
   const { isAdmin, userId } = useIsAdmin();
-  // session এখনো হাইড্রেট হয়নি
-  if (userId === null) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">
-        লোড হচ্ছে...
-      </div>
-    );
-  }
-  // role query এখনো চলছে
-  const [checked, setChecked] = useState(false);
+  const [waited, setWaited] = useState(false);
   useEffect(() => {
-    const t = setTimeout(() => setChecked(true), 800);
+    const t = setTimeout(() => setWaited(true), 1200);
     return () => clearTimeout(t);
   }, []);
-  if (!isAdmin && !checked) {
+  if (userId === null || (!isAdmin && !waited)) {
     return (
       <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">
         লোড হচ্ছে...
