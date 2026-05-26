@@ -4,31 +4,49 @@ import { supabase } from "@/integrations/supabase/client";
 
 export function useCurrentUserId() {
   const [uid, setUid] = useState<string | null>(null);
+  const [isAuthReady, setIsAuthReady] = useState(false);
+
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUid(data.user?.id ?? null));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) =>
-      setUid(s?.user?.id ?? null),
-    );
+    let mounted = true;
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      setUid(data.session?.user.id ?? null);
+      setIsAuthReady(true);
+    });
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+      setUid(s?.user?.id ?? null);
+      setIsAuthReady(true);
+    });
+
     return () => sub.subscription.unsubscribe();
   }, []);
-  return uid;
+
+  return { userId: uid, isAuthReady };
 }
 
 export function useIsAdmin() {
-  const uid = useCurrentUserId();
-  const { data } = useQuery({
-    queryKey: ["is-admin", uid],
-    enabled: !!uid,
+  const { userId, isAuthReady } = useCurrentUserId();
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["is-admin", userId],
+    enabled: isAuthReady && !!userId,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", uid!)
+        .eq("user_id", userId!)
         .eq("role", "admin")
         .maybeSingle();
       if (error) return false;
       return !!data;
     },
   });
-  return { isAdmin: !!data, userId: uid };
+
+  return {
+    isAdmin: !!data,
+    userId,
+    isAuthReady,
+    isCheckingAdmin: isAuthReady && !!userId && (isLoading || isFetching),
+  };
 }
